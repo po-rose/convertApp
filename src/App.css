@@ -1,0 +1,299 @@
+.App {
+  text-align: center;
+  background-color: black;
+  min-height: 100vh;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color:white;
+  width: 100%;
+  height: 100vh;
+  background-color: #303030;
+}
+
+.Chart-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  height: 40px;
+  margin-bottom: 5px;
+  gap: 30px;
+  background-color: #1b1b1b;
+}
+
+.Interval-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: calc(10px + 2vmin);
+  color:white;
+  width: 100%;
+  min-height: 30px;
+  margin-left: 20px;
+  gap: 5px;
+}
+
+.Indicator-container {
+  display: flex;
+  gap: 20px;
+  padding: 0 20px;
+  align-items: center;
+}
+
+.Indicator-button {
+  background: none;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.Indicator-button:hover {
+  opacity: 0.8;
+}
+
+.Chart-content {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color:white;
+  width: 100%;
+  height: 100%;
+  background-color: #1b1b1b;
+}
+
+.Interval-button {
+  background-color: #1b1b1b;
+  
+  color: white;
+  border: none;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  padding: 4px 0px;
+  width: 36px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.Interval-button:hover {
+  background-color: #303030;
+}
+
+.indicator-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.indicator-label {
+  color: white;
+  font-size: 14px;
+}
+
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #2c2c2c;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #3d98ff;
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 20px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.indicator-method {
+  position: relative;
+  min-width: 200px;
+}
+
+.indicator-select {
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  font-size: 14px;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 16px;
+  background-color: #1b1b1b;
+  color: white;
+  border: 1px solid #444;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.indicator-select:focus {
+  outline: none;
+  border-color: #3d98ff;
+}
+
+.indicator-select option {
+  background-color: #1b1b1b;
+  color: white;
+  padding: 8px;
+}
+
+.Token-input {
+  margin: 0 20px;
+}
+
+.Token-input input {
+  background-color: #1b1b1b;
+  color: white;
+  border: 1px solid #444;
+  padding: 8px 12px;
+  border-radius: 4px;
+  width: 400px;
+  text-align: center;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.Token-input input:focus {
+  outline: none;
+  border-color: #3d98ff;
+  box-shadow: 0 0 0 1px rgba(61, 152, 255, 0.1);
+}
+
+.Token-input input::placeholder {
+  color: #666;
+}
+
+.Token-input button {
+  background-color: #3d98ff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.Token-input button:hover {
+  background-color: #2d88ef;
+}
+
+.Token-input button:active {
+  transform: translateY(1px);
+}
+
+.Loading-content {
+  z-index: 1001;
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  height: 100%;
+  background: rgba(27, 27, 27, 0.8);
+}
+
+.Loading {
+  z-index: 1002;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(27, 27, 27, 0.8);
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.Loading::after {
+  content: "";
+  width: 30px;
+  height: 30px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3d98ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-left: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
