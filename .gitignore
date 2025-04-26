@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/MyApp-win32-x64
 /.pnp
 .pnp.js
 

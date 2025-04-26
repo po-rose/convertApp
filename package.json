@@ -1,8 +1,14 @@
 {
   "name": "tradingview_chart",
+  "productName": "Solana TradingView ",
+  "build": {
+      "productName": "Solana TradingView",
+      "executableName": "Solana TradingView"
+    },
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@moralisweb3/common-sol-utils": "^2.27.2",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
@@ -11,16 +17,20 @@
     "charting_library": "^1.0.2",
     "lightweight-charts": "^5.0.3",
     "moment": "^2.30.1",
+    "moralis": "^2.27.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-scripts": "5.0.1",
+    "react-toastify": "^11.0.5",
     "web-vitals": "^2.1.4"
   },
+  "main": "electron-main.js",
+  "homepage": "./",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "electron": "electron .",
+    "package": "electron-packager . MyApp --platform=win32 --arch=x64 --overwrite"
   },
   "eslintConfig": {
     "extends": [
@@ -39,5 +49,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "electron": "^35.1.4",
+    "electron-packager": "^17.1.2"
   }
 }

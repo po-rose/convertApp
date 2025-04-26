@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { HLTrend } from './indicators/HLTrend';
 import { generateMomentumSignals } from './indicators/MomentumOscillator';
 import { generateSupportResistance } from './indicators//SupportResistanceClouds.js';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { HLCAreaSeries } from './hlc-area-series/hlc-area-series.ts';
 import { HLAreaSeries } from './hl-area-series/hl-area-series.ts';
@@ -12,39 +14,43 @@ import { CloudAreaSeries } from './cloud-area-series/cloud-area-series.ts';
 import { getOHLCData } from './utils/getOHLCData.js';
 
 function App() {
+  const MORALIS_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6IjI3MDFkMGIzLTY4ZmEtNDAzMi04MmIwLTc2OTgwNTQ0N2Y5ZCIsIm9yZ0lkIjoiNDM5MTAzIiwidXNlcklkIjoiNDUxNzQ2IiwidHlwZUlkIjoiZDVjMDgyOTQtMTU3ZS00MWQzLTliYjktOTAyMTZiZjhmM2FkIiwidHlwZSI6IlBST0pFQ1QiLCJpYXQiOjE3NDM1MDg2MDcsImV4cCI6NDg5OTI2ODYwN30.crJy-Cvuwn1__g-0EHPooLV95VsUB7NGmBzsG_R3KTk';
   const [dataDataOHLC, setDataOHLC] = useState([]);
-  const [interval, setInterval] = useState('5m');
-  const [selectedIndicator, setSelectedIndicator] = useState('1');
+  const [currency, setCurrency] = useState('usd');
+  const [interval, setInterval] = useState('1m');
+  const [selectedIndicator, setSelectedIndicator] = useState(['1']);
   const [tokenAddress, setTokenAddress] = useState("BQX1cjcRHXmrqNtoFWwmE5bZj7RPneTmqXB979b2pump");
   const [inputToken, setInputToken] = useState("BQX1cjcRHXmrqNtoFWwmE5bZj7RPneTmqXB979b2pump");
   const [pairAddress, setPairAddress] = useState("2baC5JL75NosEr2oLJZ14gbNjWDuUq3ui33ZPLZTgCEA")
   //9fmdkQipJK2teeUv53BMDXi52uRLbrEvV38K8GBNkiM7
   //CniPCE4b3s8gSUPhUiyMjXnytrEqUrMfSsnbBjLCpump
   const [isRealTime, setIsRealTime] = useState(false)
+  const [newToken, setNewToken] = useState(false);
   const [isShow, setIsShow] = useState({
     volume: false,
     indicator: false,
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [isIntervalMenuOpen, setIsIntervalMenuOpen] = useState(false);
   const indicatorOptions = [
     { value: '1', label: 'H&L Moving Average' },
     { value: '2', label: 'Momentum Oscillator' },
     { value: '3', label: 'Support/Resistance Clouds' },
-    { value: '4', label: 'All' },
   ]
-  const intervals = ['1s', '5s', '15s', '30s', '1m', '5m', '30m', '1h', '4h']
+  const intervals = ['1s', '10s', '30s', '1m', '5m', '30m', '1h', '4h']
+  let chart;
 
   // Get Data from Pumpfun
   const getData = async (isAdd) => {
     if (!isAdd) setIsLoading(true);
     try {
-      const data = await getOHLCData(pairAddress, interval, isAdd);
+      const data = await getOHLCData(pairAddress, interval, isAdd, currency);
+
       if (data) {
         if (!isAdd) {
           setDataOHLC(data);
-          console.log(dataDataOHLC);
         } else {
-          if (data.length > 0) {
+          if (data.length > 0 && dataDataOHLC.length > 0) {
             if (dataDataOHLC[dataDataOHLC.length - 1].time < data[0].time) {
               const newData = {
                 time: data[0].time,
@@ -67,8 +73,8 @@ function App() {
 
   const drawIndicator1 = (chart) => {
     if (dataDataOHLC.length < 36) {
-      alert("The data length is small");
-      // toggleIsShow('indicator');
+      toast.warning("The data length is small for H&L Moving Average");
+      setSelectedIndicator((prevtItems) => prevtItems.filter((item) => item !== '1'));
     }
     const hlData = HLTrend(dataDataOHLC);
     const customSeriesViewList = new HLCAreaSeries();
@@ -84,13 +90,14 @@ function App() {
       lastValueVisible: false,
       priceLineVisible: false,
     });
-    hlcChart.setData(hlData);
+    if(dataDataOHLC.length> 168) hlcChart.setData(hlData.slice(125, hlData.length));
+    else hlcChart.setData(hlData);
   }
 
   const drawIndicator2 = (chart) => {
     if (dataDataOHLC.length < 168) {
-      alert("The data length is small.");
-      // toggleIsShow('indicator');
+      toast.warning("The data length is small for Momentum Oscillator");
+      setSelectedIndicator((prevtItems) => prevtItems.filter((item) => item !== '2'));
     }
     const closeData = dataDataOHLC.map((item) => item.close);
     const timeData = dataDataOHLC.map((item) => item.time);
@@ -146,8 +153,8 @@ function App() {
 
   const drawIndicator3 = (chart) => {
     if (dataDataOHLC.length < 28) {
-      alert("The data length is small");
-      // toggleIsShow('indicator');
+      toast.warning("The data length is small for Support/Resistance Clouds");
+      setSelectedIndicator((prevtItems) => prevtItems.filter((item) => item !== '3'));
     }
     const chartData = generateSupportResistance(dataDataOHLC);
     const cloudSeriesView = new CloudAreaSeries();
@@ -160,18 +167,42 @@ function App() {
       lastValueVisible: false,
       priceLineVisible: false,
     });
-    cloudSeriesChart.setData(chartData);
+    if(dataDataOHLC.length> 168) cloudSeriesChart.setData(chartData.slice(139, chartData.length));
+    else cloudSeriesChart.setData(chartData);
   }
+
+  //Getting Bonding-status on pumpfun
+  useEffect(() => {
+    const options = {
+      method: 'GET',
+      headers: {
+        accept: 'application/json',
+        'X-API-Key': MORALIS_API_KEY,
+      },
+    };
+    fetch(`https://solana-gateway.moralis.io/token/mainnet/${tokenAddress}/bonding-status`, options)
+      .then((response) => response.json())
+      .then((data) => {
+        if(data.bondingProgress < 100)setCurrency('native');
+        else setCurrency('usd');
+        setNewToken(!newToken);
+        setInterval('1m');
+      })
+      .catch((err) => console.error(err));
+  }, [tokenAddress])
+
   // Add useEffect for interval changes
   useEffect(() => {
+    // setDataOHLC([]);
     getData(false);
-  }, [interval, tokenAddress]);
+  }, [interval, newToken]);
 
   // Separate useEffect for chart rendering
   useEffect(() => {
     if (document.getElementById("container") === null) return;
     const handleResize = () => {
       chart.applyOptions({ width: document.getElementById("container").clientWidth });
+      chart.applyOptions({ height: document.getElementById("container").clientHeight - 45});
     };
     const chartOptions = {
       layout: { textColor: 'white', background: { type: 'solid', color: '#1b1b1b' } },
@@ -206,37 +237,36 @@ function App() {
         priceFormatter: price => price.toFixed(9),
       },
     };
-    let chart = createChart(document.getElementById("container"), chartOptions);
+    chart = createChart(document.getElementById("container"), chartOptions);
 
     // Indicators
     if (isShow.indicator) {      
-      switch (selectedIndicator) {
-        case '1':
-          drawIndicator1(chart);
-          break;
-        case '2':
-          drawIndicator2(chart);
-          break;
-        case '3':
-          drawIndicator3(chart);
-          break;
-        case '4':
-          drawIndicator1(chart);
-          drawIndicator2(chart);
-          drawIndicator3(chart);
-          break;
-        default:
-          console.warn('Selected indicator not implemented');
-      }
+      selectedIndicator.forEach(indicator => {
+        switch (indicator) {
+          case '1':
+            drawIndicator1(chart);
+            break;
+          case '2':
+            drawIndicator2(chart);
+            break;
+          case '3':
+            drawIndicator3(chart);
+            break;
+          default:
+            console.warn('Selected indicator not implemented');
+        }
+      });
     }
-
     const candlestickSeries = chart.addSeries(CandlestickSeries, {
       upColor: '#26a69a', downColor: '#ef5350', borderVisible: false,
       wickUpColor: '#26a69a', wickDownColor: '#ef5350',
     }, 0);
-    candlestickSeries.setData(dataDataOHLC);
+
+    if(dataDataOHLC.length>500)candlestickSeries.setData(dataDataOHLC.slice(168, dataDataOHLC.length));
+    else candlestickSeries.setData(dataDataOHLC);
 
     chart.timeScale().fitContent();
+    if(dataDataOHLC.length>200)chart.timeScale().scrollToPosition(5);
 
     window.addEventListener('resize', handleResize);
     return () => {
@@ -265,18 +295,33 @@ function App() {
   const handleTokenSubmit = async (e) => {
     e.preventDefault();
     try {
-      const url = `https://api.dexscreener.com/latest/dex/tokens/${inputToken}`;
-      fetch(url)
-        .then((response) => response.text())
-        .then((result) => {
-          if (isShow.indicator) toggleIsShow('indicator');
-          result = JSON.parse(result);
-          result = result.pairs;
-          const pairLists = result.map((item) => item.pairAddress)
+      const options = {
+        method: 'GET',
+        headers: {
+          accept: 'application/json',
+          'X-API-Key': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6IjI3MDFkMGIzLTY4ZmEtNDAzMi04MmIwLTc2OTgwNTQ0N2Y5ZCIsIm9yZ0lkIjoiNDM5MTAzIiwidXNlcklkIjoiNDUxNzQ2IiwidHlwZUlkIjoiZDVjMDgyOTQtMTU3ZS00MWQzLTliYjktOTAyMTZiZjhmM2FkIiwidHlwZSI6IlBST0pFQ1QiLCJpYXQiOjE3NDM1MDg2MDcsImV4cCI6NDg5OTI2ODYwN30.crJy-Cvuwn1__g-0EHPooLV95VsUB7NGmBzsG_R3KTk'
+        },
+      };
+      fetch(`https://solana-gateway.moralis.io/token/mainnet/${inputToken}/pairs`, options)
+        .then(response => response.json())
+        .then(response =>{ 
+          setPairAddress(response.pairs[0].pairAddress);
+          console.log(response.pairs[0].pairAddress);
           setTokenAddress(inputToken);
-          setPairAddress(pairLists[0]);
         })
-        .catch((error) => console.error(error));
+        .catch(err => console.error(err));
+    //   const url = `https://api.dexscreener.com/latest/dex/tokens/${inputToken}`;
+    //   fetch(url)
+    //     .then((response) => response.text())
+    //     .then((result) => {
+    //       if (isShow.indicator) toggleIsShow('indicator');
+    //       result = JSON.parse(result);
+    //       result = result.pairs;
+    //       const pairLists = result.map((item) => item.pairAddress)
+    //       setTokenAddress(inputToken);
+    //       setPairAddress(pairLists[0]);
+    //     })
+    //     .catch((error) => console.error(error));
     } catch (error) {
       console.error('Error getting pair addresses:', error);
     }
@@ -284,19 +329,60 @@ function App() {
 
   return (
     <div className="App" >
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       <div className="App-content">
         <div className='Chart-header'>
           <div className='Interval-container'>
-            {
-              intervals.map((item, index) => {
-                return (
-                  <button key={index} onClick={() => setInterval(item)} style={{ color: item === interval ? "#3d98ff" : "white", borderBottom: item === interval ? "1px solid #4ea9fd" : "1px solid #1b1b1b" }} className='Interval-button'>{item}</button>
-                )
-              })
-            }
+            <div className='interval-buttons'>
+              {intervals.map((item, index) => (
+                <button
+                  key={index}
+                  onClick={() => setInterval(item)}
+                  className={`Interval-button ${item === interval ? 'active' : ''}`}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+            <div className='interval-dropdown'>
+              <button 
+                className='interval-menu-button'
+                onClick={() => setIsIntervalMenuOpen(!isIntervalMenuOpen)}
+              >
+                {interval}
+                <span className='dropdown-arrow'>▼</span>
+              </button>
+              {isIntervalMenuOpen && (
+                <div className='interval-dropdown-menu'>
+                  {intervals.map((item, index) => (
+                    <button
+                      key={index}
+                      onClick={() => {
+                        setInterval(item);
+                        setIsIntervalMenuOpen(false);
+                      }}
+                      className={`interval-dropdown-item ${item === interval ? 'active' : ''}`}
+                    >
+                      {item}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
           <div className='Token-input'>
-            <form onSubmit={handleTokenSubmit} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <form onSubmit={handleTokenSubmit} style={{ display: 'flex', alignItems: 'center' }}>
               <input
                 type="text"
                 value={inputToken}
@@ -314,17 +400,24 @@ function App() {
           </div>
           <div className='Indicator-container'>
             {isShow.indicator && <div className='indicator-method'>
-              <select
-                className='indicator-select'
-                value={selectedIndicator}
-                onChange={(e) => setSelectedIndicator(e.target.value)}
-              >
+              <div className='indicator-checkboxes'>
                 {indicatorOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
+                  <label key={option.value} className='indicator-checkbox-label'>
+                    <input
+                      type='checkbox'
+                      checked={selectedIndicator.includes(option.value)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedIndicator([...selectedIndicator, option.value]);
+                        } else {
+                          setSelectedIndicator(selectedIndicator.filter(id => id !== option.value));
+                        }
+                      }}
+                    />
+                    <span>{option.label}</span>
+                  </label>
                 ))}
-              </select>
+              </div>
             </div>}
             <div className='indicator-toggle'>
               <span className='indicator-label'>Indicator</span>

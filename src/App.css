@@ -47,18 +47,110 @@
   flex-direction: row;
   align-items: center;
   font-size: calc(10px + 2vmin);
-  color:white;
+  color: white;
   width: 100%;
   min-height: 30px;
   margin-left: 20px;
   gap: 5px;
 }
 
+.interval-buttons {
+  display: flex;
+  gap: 5px;
+}
+
+.interval-dropdown {
+  display: none;
+  position: relative;
+}
+
+.Interval-button {
+  background-color: #1b1b1b;
+  color: white;
+  border: none;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  padding: 4px 0px;
+  width: 36px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.Interval-button:hover {
+  background-color: #303030;
+}
+
+.Interval-button.active {
+  color: #3d98ff;
+  border-bottom: 1px solid #4ea9fd;
+}
+
+.interval-menu-button {
+  background-color: #1b1b1b;
+  color: white;
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 50px;
+  justify-content: space-between;
+}
+
+.interval-menu-button:hover {
+  background-color: #303030;
+}
+
+.dropdown-arrow {
+  font-size: 10px;
+  margin-left: 5px;
+}
+
+.interval-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #1b1b1b;
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 5px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 50px;
+}
+
+.interval-dropdown-item {
+  background-color: #1b1b1b;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: left;
+  border-radius: 2px;
+}
+
+.interval-dropdown-item:hover {
+  background-color: #303030;
+}
+
+.interval-dropdown-item.active {
+  color: #3d98ff;
+  background-color: #303030;
+}
+
 .Indicator-container {
   display: flex;
   gap: 20px;
   padding: 0 20px;
-  align-items: center;
 }
 
 .Indicator-button {
@@ -85,29 +177,11 @@
   background-color: #1b1b1b;
 }
 
-.Interval-button {
-  background-color: #1b1b1b;
-  
-  color: white;
-  border: none;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 14px;
-  padding: 4px 0px;
-  width: 36px;
-  cursor: pointer;
-  border-radius: 4px;
-}
-
-.Interval-button:hover {
-  background-color: #303030;
-}
-
 .indicator-toggle {
   display: flex;
   align-items: center;
   gap: 10px;
+  padding-right: 10px;
 }
 
 .indicator-label {
@@ -180,8 +254,11 @@ input:checked + .slider:before {
 }
 
 .indicator-method {
-  position: relative;
+  position: absolute;
   min-width: 200px;
+  z-index: 1002;
+  right: 5px;
+  top: 38px;
 }
 
 .indicator-select {
@@ -196,7 +273,7 @@ input:checked + .slider:before {
   background-size: 16px;
   background-color: #1b1b1b;
   color: white;
-  border: 1px solid #444;
+  border: 1px solid #303030;
   padding: 4px 8px;
   border-radius: 4px;
   cursor: pointer;
@@ -214,13 +291,13 @@ input:checked + .slider:before {
 }
 
 .Token-input {
-  margin: 0 20px;
+  margin: 0px;
 }
 
 .Token-input input {
   background-color: #1b1b1b;
   color: white;
-  border: 1px solid #444;
+  border: 1px solid #303030;
   padding: 8px 12px;
   border-radius: 4px;
   width: 400px;
@@ -296,4 +373,49 @@ input:checked + .slider:before {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+.indicator-checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px;
+  background-color: #1b1b1b;
+  border-radius: 4px;
+  border: 3px solid #444;
+}
+
+.indicator-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: white;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.indicator-checkbox-label:hover {
+  background-color: #2a2a2a;
+}
+
+.indicator-checkbox-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.indicator-checkbox-label span {
+  font-size: 14px;
+}
+
+@media (max-width: 1150px) {
+  .interval-buttons {
+    display: none;
+  }
+  
+  .interval-dropdown {
+    display: block;
+  }
 }
